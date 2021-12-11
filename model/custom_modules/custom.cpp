@@ -142,14 +142,14 @@ void setup_microenvironment( void )
 
     //---------------------------------
     // read glom BM distances (signed)
-	int gbm_index = microenvironment.find_density_index( "glom_bm_distance" ); 
+	int gbm_index = microenvironment.find_density_index( "pbm_gbm_distance" ); 
     std::cout << "\n---------- gbm_index = " << gbm_index << std::endl;
 
     // for( int n=0; n < microenvironment.number_of_voxels(); n++ )
     std::ifstream gbm_file;
     std::string line;
     try {
-        gbm_file.open("./config/gbm_dist.dat");
+        gbm_file.open("../data/pbm_gbm_dist.dat");
 
         double dval;
         int n = 0;
@@ -183,13 +183,13 @@ void setup_microenvironment( void )
     }
 
     //---------------------------------
-    // read glom capillary (4 vessels) distances (signed)
-	int gcap_index = microenvironment.find_density_index( "glom_cap_distance" ); 
+    // read glom capillary (4 blood vessel regions) distances (signed)
+	int gcap_index = microenvironment.find_density_index( "blood_vessel_distance" ); 
     std::cout << "\n---------- gcap_index = " << gcap_index << std::endl;
 
     std::ifstream gcap_file;
     try {
-        gcap_file.open("./config/vessels4_dist.dat");
+        gcap_file.open("../data/vessels4_dist.dat");
 
         double dval;
         int n = 0;
