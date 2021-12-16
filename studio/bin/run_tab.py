@@ -70,7 +70,7 @@ class RunModel(QWidget):
         hbox.addWidget(QLabel("Config:"))
         self.config_xml_name = QLineEdit()
         # self.config_xml_name.setText('mymodel.xml')
-        self.config_xml_name.setText('PhysiCell_settings.xml')
+        self.config_xml_name.setText('copy_PhysiCell_settings.xml')
         hbox.addWidget(self.config_xml_name)
 
         # self.vbox.addStretch()

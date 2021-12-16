@@ -217,7 +217,7 @@ class Vis(QWidget):
             print("Expecting initial.xml, but does not exist.")
             msgBox = QMessageBox()
             msgBox.setIcon(QMessageBox.Information)
-            msgBox.setText("Did not find 'initial.xml' in this directory.")
+            msgBox.setText("Did not find 'initial.xml' in the output directory. Will plot a dummy substrate until you run a simulation.")
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec()
             return
@@ -241,11 +241,8 @@ class Vis(QWidget):
         xcoords = xcoords_str.split()
         print('reset_model(): xcoords=',xcoords)
         print('reset_model(): len(xcoords)=',len(xcoords))
-        ycoords_str = xml_root.find(".//microenvironment//domain//mesh//y_coordinates").text
-        ycoords = ycoords_str.split()
         self.numx =  len(xcoords)
-        self.numy =  len(ycoords)
-        print("vis_tab.py: reset_model(): self.numx, .numy = ",self.numx, self.numy)
+        self.numy =  len(xcoords)
 
         #-------------------
         vars_uep = xml_root.find(".//microenvironment//domain//variables")
@@ -422,7 +419,9 @@ class Vis(QWidget):
         self.canvas.setStyleSheet("background-color:transparent;")
 
         # Adding one subplot for image
-        self.ax0 = self.figure.add_subplot(111)
+        # self.ax0 = self.figure.add_subplot(111)
+        self.ax0 = self.figure.add_subplot(111, adjustable='box', aspect=1.2)
+        
         # self.ax0.get_xaxis().set_visible(False)
         # self.ax0.get_yaxis().set_visible(False)
         # plt.tight_layout()
@@ -452,6 +451,10 @@ class Vis(QWidget):
 
         self.cmap = plt.cm.get_cmap("viridis")
         self.mysubstrate = self.ax0.contourf(X, Y, Z, cmap=self.cmap)
+        # if self.field_index > 4:
+        #     # plt.contour(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), [0.0])
+        #     plt.contour(X, Y, Z, [0.0])
+
         self.cbar = self.figure.colorbar(self.mysubstrate, ax=self.ax0)
         self.cbar.ax.tick_params(labelsize=self.fontsize)
 
@@ -714,8 +717,10 @@ class Vis(QWidget):
 
         # plt.xlim(self.xmin, self.xmax)
         # plt.ylim(self.ymin, self.ymax)
-        self.ax0.set_xlim(self.xmin, self.xmax)
-        self.ax0.set_ylim(self.ymin, self.ymax)
+        # self.ax0.set_xlim(self.xmin, self.xmax)
+        self.ax0.set_xlim(-450, self.xmax)
+        # self.ax0.set_ylim(self.ymin, self.ymax)
+        self.ax0.set_ylim(0.0, self.ymax)
         self.ax0.tick_params(labelsize=4)
 
         # self.ax0.colorbar(collection)
@@ -802,11 +807,17 @@ class Vis(QWidget):
         # numy = numx
         # self.numx = 50  # for template model
         # self.numy = 50
+        self.numx = 88  # for kidney model
+        self.numy = 75
         print("self.numx, self.numy = ",self.numx, self.numy )
         # nxny = numx * numy
 
         xgrid = M[0, :].reshape(self.numy, self.numx)
         ygrid = M[1, :].reshape(self.numy, self.numx)
+
+        zvals = M[self.field_index,:].reshape(self.numy,self.numx)
+        print("zvals.min() = ",zvals.min())
+        print("zvals.max() = ",zvals.max())
 
         # self.num_contours = 15
 
@@ -831,8 +842,9 @@ class Vis(QWidget):
         contour_ok = True
         # if (self.colormap_fixed_toggle.value):
         # self.field_index = 4
-
-        substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), self.num_contours, cmap='viridis')  # self.colormap_dd.value)
+        substrate_plot = self.ax0.contourf(xgrid, ygrid, zvals, self.num_contours, cmap='viridis')  # self.colormap_dd.value)
+        if self.field_index > 4:
+            self.ax0.contour(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), [0.0])
 
         print("# axes = ",len(self.figure.axes))
         if len(self.figure.axes) > 1: 
@@ -873,6 +885,8 @@ class Vis(QWidget):
         #     cbar = self.figure.colorbar(substrate_plot, ax=self.ax0)
         #     cbar.ax.tick_params(labelsize=self.fontsize)
 
-        self.ax0.set_xlim(self.xmin, self.xmax)
-        self.ax0.set_ylim(self.ymin, self.ymax)
+        # self.ax0.set_xlim(self.xmin, self.xmax)
+        self.ax0.set_xlim(-450, self.xmax)
+        # self.ax0.set_ylim(self.ymin, self.ymax)
+        self.ax0.set_ylim(0.0, self.ymax)
         # self.ax0.clf()
