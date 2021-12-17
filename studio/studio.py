@@ -213,6 +213,8 @@ class PhysiCellXMLCreator(QWidget):
         file_menu.addAction("Save", self.save_cb, QtGui.QKeySequence('Ctrl+s'))
         # file_menu.addAction("Save as", self.save_as_cb)
         file_menu.addAction("Save as mymodel.xml", self.save_as_cb)
+        file_menu.addAction("Load state", self.load_state_cb)
+        file_menu.addAction("Save state", self.save_state_cb)
         # recent_act = QtGui.QAction('Recent', self)
         # save_act = QtGui.QAction('Save', self)
         # save_act.triggered.connect(self.save_cb)
@@ -484,6 +486,30 @@ class PhysiCellXMLCreator(QWidget):
         # self.config_file = "config_samples/" + name + ".xml"
         self.config_file = copy_file
         self.show_sample_model()
+
+    def load_state_cb(self):
+        filePath = QFileDialog.getOpenFileName(self,'',".")
+        if len(filePath[0]) > 0:
+            print("\n\nload_state_cb():  filePath=",filePath)
+            print("len(filePath[0])=",len(filePath[0]))
+            full_path_pssm_name = filePath[0]
+            pssm_tree = ET.parse(full_path_pssm_name)
+            pssm_root = pssm_tree.getroot()
+            exec_pgm = pssm_root.find(".//exec").text
+            print("exec_pgm = ",exec_pgm)
+            config_file = pssm_root.find(".//config").text
+            print("config_file = ",config_file)
+            self.run_tab.exec_name.setText(exec_pgm)
+            self.run_tab.config_xml_name.setText(config_file)
+
+    def save_state_cb(self):
+        save_as_file = QFileDialog.getSaveFileName(self,'',".")
+        if save_as_file:
+            print(save_as_file)
+            print(" save_as_file: ",save_as_file) # writing to:  ('/Users/
+        # pssm_tree = ET.parse(pssm_file)
+        # pssm_root = pssm_tree.getroot()
+
 
     def biorobots_cb(self):
         print("\n\n\n================ copy/load sample ======================================")

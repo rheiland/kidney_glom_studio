@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PhysiCell_Studio_state version="0.1">
+  <exec>../model/myproj</exec>
+  <config>config/PhysiCell_settings.xml</config>
+</PhysiCell_Studio_state>
