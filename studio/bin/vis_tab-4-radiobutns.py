@@ -46,8 +46,6 @@ class Vis(QWidget):
         # self.tabs.resize(200,5)
         
         self.num_contours = 15
-        self.num_contours = 25
-        self.num_contours = 50
         self.fontsize = 5
 
         self.plot_svg_flag = True
@@ -148,20 +146,17 @@ class Vis(QWidget):
         # self.prepare_button.clicked.connect(self.prepare_plot_cb)
         # controls_hbox.addWidget(self.prepare_button)
 
-        self.cells_checkbox = QCheckBox('Cells')
-        self.cells_checkbox.setChecked(True)
-        self.cells_checkbox.clicked.connect(self.cells_toggle_cb)
-        self.cells_checked_flag = True
-
-        self.substrates_checkbox = QCheckBox('Substrates')
-        self.substrates_checkbox.setChecked(True)
-        self.substrates_checkbox.clicked.connect(self.substrates_toggle_cb)
-        self.substrates_checked_flag = True
+        self.rbtn1 = QRadioButton('Cells')
+        self.rbtn2 = QRadioButton('Substrates')
+        self.rbtn1.setChecked(True)  # rf.  self.plot_svg_flag = True
+        # self.rbtn2.setChecked(True)  # rf.  self.plot_svg_flag = True
         
+        self.rbtn1.toggled.connect(self.cells_sub_toggle_cb)
+        self.rbtn2.toggled.connect(self.cells_sub_toggle_cb)
 
         hbox = QHBoxLayout()
-        hbox.addWidget(self.cells_checkbox)
-        hbox.addWidget(self.substrates_checkbox)
+        hbox.addWidget(self.rbtn1)
+        hbox.addWidget(self.rbtn2)
         controls_hbox.addLayout(hbox)
 
         #-------------------
@@ -189,20 +184,17 @@ class Vis(QWidget):
         # self.create_figure()
 
 
-    def update_plots(self):
-        self.ax0.cla()
-        if self.substrates_checked_flag:
-            self.plot_substrate(self.current_svg_frame)
-        if self.cells_checked_flag:
-            self.plot_svg(self.current_svg_frame)
-
-        self.canvas.update()
-        self.canvas.draw()
-
     def substrates_cbox_changed_cb(self,idx):
         print("----- substrates_cbox_changed_cb: idx = ",idx)
         self.field_index = 4 + idx # substrate (0th -> 4 in the .mat)
-        self.update_plots()
+        if self.plot_svg_flag:
+            self.plot_substrate(self.current_svg_frame)
+            self.plot_svg(self.current_svg_frame)
+        else:
+            self.plot_substrate(self.current_svg_frame)
+
+        self.canvas.update()
+        self.canvas.draw()
 
 
     def open_directory_cb(self):
@@ -325,9 +317,14 @@ class Vis(QWidget):
         if self.current_svg_frame < 0:
             self.current_svg_frame = 0
         # print('svg # ',self.current_svg_frame)
-
-        self.update_plots()
-
+        if self.plot_svg_flag:
+            self.plot_substrate(self.current_svg_frame)
+            self.plot_svg(self.current_svg_frame)
+        else:
+            self.plot_substrate(self.current_svg_frame)
+            self.plot_svg(self.current_svg_frame)
+        self.canvas.update()
+        self.canvas.draw()
 
     def forward_plot_cb(self, text):
         if self.reset_model_flag:
@@ -336,13 +333,17 @@ class Vis(QWidget):
 
         self.current_svg_frame += 1
         # print('svg # ',self.current_svg_frame)
-
-        self.update_plots()
-
+        if self.plot_svg_flag:
+            self.plot_substrate(self.current_svg_frame)
+            self.plot_svg(self.current_svg_frame)
+        else:
+            self.plot_substrate(self.current_svg_frame)
+            self.plot_svg(self.current_svg_frame)
+        self.canvas.update()
+        self.canvas.draw()
 
     # def task(self):
             # self.dc.update_figure()
-
     def play_plot_cb(self):
         for idx in range(1):
             self.current_svg_frame += 1
@@ -361,20 +362,26 @@ class Vis(QWidget):
                 self.current_svg_frame -= 1
                 return
 
-            self.update_plots()
+            if self.plot_svg_flag:
+                self.plot_svg(self.current_svg_frame)
+            else:
+                self.plot_substrate(self.current_svg_frame)
 
+            self.canvas.update()
+            self.canvas.draw()
 
-    def cells_toggle_cb(self,bval):
-        self.cells_checked_flag = bval
+    def cells_sub_toggle_cb(self):
+        radioBtn = self.sender()
+        # if radioBtn.isChecked():
+        if "Cells" in radioBtn.text():
+            self.plot_svg_flag = True 
+            self.plot_svg(self.current_svg_frame)
+        else:
+            # self.plot_svg_flag = False 
+            self.plot_substrate(self.current_svg_frame)
 
-        self.update_plots()
-
-
-    def substrates_toggle_cb(self,bval):
-        self.substrates_checked_flag = bval
-
-        self.update_plots()
-
+        self.canvas.update()
+        self.canvas.draw()
 
     def animate(self, text):
         if self.reset_model_flag:
@@ -402,9 +409,13 @@ class Vis(QWidget):
     def prepare_plot_cb(self, text):
         self.current_svg_frame += 1
         print('\n\n   ====>     prepare_plot_cb(): svg # ',self.current_svg_frame)
+        if self.plot_svg_flag:
+            self.plot_svg(self.current_svg_frame)
+        else:
+            self.plot_substrate(self.current_svg_frame)
 
-        self.update_plots()
-
+        self.canvas.update()
+        self.canvas.draw()
 
     def create_figure(self):
         print("\n--------- create_figure(): ------- creating figure, canvas, ax0")

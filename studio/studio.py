@@ -64,7 +64,9 @@ class PhysiCellXMLCreator(QWidget):
         # self.setMinimumSize(800, 620)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(800, 660)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(800, 800)  # width, height (height >= Cell Types|Death params)
-        self.setMinimumSize(700, 770)  # width, height (height >= Cell Types|Death params)
+
+        # self.setMinimumSize(700, 770)  # width, height (height >= Cell Types|Death params)
+        self.setMinimumSize(1200, 770)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(600, 600)  # width, height (height >= Cell Types|Death params)
         # self.resize(400, 790)  # width, height (height >= Cell Types|Death params)
 
@@ -81,13 +83,13 @@ class PhysiCellXMLCreator(QWidget):
         # read_file = "../data/cancer_biorobots_flat.xml"
         # read_file = "../data/pred_prey_flat.xml"
 
-        model_name = "pred_prey_flat"
-        model_name = "cancer_biorobots_flat"
-        model_name = "test1"
-        model_name = "test-gui"
-        model_name = "covid19_v5_flat"
-        model_name = "template"
-        model_name = "biorobots_flat"
+        # model_name = "pred_prey_flat"
+        # model_name = "cancer_biorobots_flat"
+        # model_name = "test1"
+        # model_name = "test-gui"
+        # model_name = "covid19_v5_flat"
+        # model_name = "template"
+        # model_name = "biorobots_flat"
         model_name = "PhysiCell_settings"
         # model_name = "randy_test"  #rwh
         # read_file = "data/" + model_name + ".xml"
