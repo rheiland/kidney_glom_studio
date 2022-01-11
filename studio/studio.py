@@ -65,8 +65,8 @@ class PhysiCellXMLCreator(QWidget):
         # self.setMinimumSize(800, 660)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(800, 800)  # width, height (height >= Cell Types|Death params)
 
-        # self.setMinimumSize(700, 770)  # width, height (height >= Cell Types|Death params)
-        self.setMinimumSize(1200, 770)  # width, height (height >= Cell Types|Death params)
+        self.setMinimumSize(700, 770)  # width, height (height >= Cell Types|Death params)
+        # self.setMinimumSize(1200, 770)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(600, 600)  # width, height (height >= Cell Types|Death params)
         # self.resize(400, 790)  # width, height (height >= Cell Types|Death params)
 
@@ -170,7 +170,7 @@ class PhysiCellXMLCreator(QWidget):
         #------------------
         tabWidget = QTabWidget()
         stylesheet = """
-            QTabBar::tab:selected {background: dodgerblue;}
+            QTabBar::tab:selected {background: orange;}   #  dodgerblue
             """
         tabWidget.setStyleSheet(stylesheet)
         tabWidget.addTab(self.config_tab,"Config Basics")

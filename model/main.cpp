@@ -114,6 +114,8 @@ int main( int argc, char* argv[] )
 	/* Microenvironment setup */ 
 	
 	setup_microenvironment(); // modify this in the custom code 
+    read_membrane_distance_data();
+    read_pbm_membrane_gradient_data();
 	
 	/* PhysiCell setup */ 
  	

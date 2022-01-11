@@ -239,6 +239,7 @@ class Vis(QWidget):
         print('bds=',bds)
         self.xmin = float(bds[0])
         self.xmax = float(bds[3])
+        self.xmax = 0.0   # rwh: temp fix
         print('reset_model(): self.xmin, xmax=',self.xmin, self.xmax)
         self.x_range = self.xmax - self.xmin
 
@@ -414,7 +415,8 @@ class Vis(QWidget):
 
         # Adding one subplot for image
         # self.ax0 = self.figure.add_subplot(111)
-        self.ax0 = self.figure.add_subplot(111, adjustable='box', aspect=1.2)
+        # self.ax0 = self.figure.add_subplot(111, adjustable='box', aspect=1.2)
+        self.ax0 = self.figure.add_subplot(111, adjustable='box')
         
         # self.ax0.get_xaxis().set_visible(False)
         # self.ax0.get_yaxis().set_visible(False)

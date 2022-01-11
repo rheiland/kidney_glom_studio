@@ -80,6 +80,8 @@ void setup_tissue( void );
 
 // set up the BioFVM microenvironment 
 void setup_microenvironment( void ); 
+void read_membrane_distance_data( void );
+void read_pbm_membrane_gradient_data( void );
 
 // custom pathology coloring function 
 

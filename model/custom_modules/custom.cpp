@@ -71,6 +71,10 @@
 #include <sstream>
 #include <string>
 
+double pbm_grad_x[88][75];
+double pbm_grad_y[88][75];
+
+
 void create_cell_types( void )
 {
 	// set the random seed 
@@ -129,34 +133,101 @@ void create_cell_types( void )
 	return; 
 }
 
-void setup_microenvironment( void )
+void read_pbm_membrane_gradient_data( void )
 {
-    static std::string pbm_gbm_dist_file = parameters.strings( "pbm_gbm_distance_file" ); 
-    static std::string vessels_dist_file = parameters.strings( "vessels_distance_file" ); 
+    std::ifstream grad_file;
+    std::string line;
 
-    std::cout << "\n---------- setup_microenvironment(): dist1 file " << pbm_gbm_dist_file << std::endl;
-    std::cout << "\n---------- setup_microenvironment(): dist2 file" << vessels_dist_file << std::endl;
-    // set domain parameters 
+    double dval;
+    int n = 0;
+    float vmin = 1.e6;
+    float vmax = -1.e6;
+    float v;
 
-    // put any custom code to set non-homogeneous initial conditions or 
-    // extra Dirichlet nodes here. 
+    int idy = 0;
+    int idx = 0;
 
-    // initialize BioFVM 
+    try {
+        std::cout << " ---- Reading ./config/grad_x_pbm.dat\n";
+        grad_file.open("./config/grad_x_pbm.dat");
 
-    initialize_microenvironment();
+        while (std::getline(grad_file,line))
+        {
+            // std::cout << "-- " << count1 << std::endl;
+            // count1++;
+            std::istringstream s(line);
+            std::string field;
+            // if (count1 > 5) break;
+            idx = 0;
+            while (std::getline(s,field,','))
+            {
+                // std::cout << count2 << ": " << field << std::endl;
+                v = std::stof(field);
+                if (v < vmin) vmin = v;
+                if (v > vmax) vmax = v;
+                pbm_grad_x[idy][idx] = v;
+                n++;
+                // count2++;
+                // if (count2 > 5) break;
+                idx += 1;
+            }
+            idy += 1;
+        }
+        std::cout << "-------- grad_x vmin,vmax= " << vmin << ", "  << vmax << std::endl;
+    }
+    catch (const std::ifstream::failure& e) {
+      std::cout << ">>>>>>> Exception opening/reading grad_x file";
+    }
 
+    grad_file.close();
+
+    try {
+        grad_file.open("./config/grad_y_pbm.dat");
+        std::cout << " ---- Reading ./config/grad_y_pbm.dat\n";
+        idx = 0;
+        idy = 0;
+        while (std::getline(grad_file,line))
+        {
+            // std::cout << "-- " << count1 << std::endl;
+            // count1++;
+            std::istringstream s(line);
+            std::string field;
+            // if (count1 > 5) break;
+            idx = 0;
+            while (std::getline(s,field,','))
+            {
+                // std::cout << count2 << ": " << field << std::endl;
+                v = std::stof(field);
+                if (v < vmin) vmin = v;
+                if (v > vmax) vmax = v;
+                pbm_grad_x[idy][idx] = v;
+                n++;
+                // count2++;
+                // if (count2 > 5) break;
+                idx += 1;
+            }
+            idy += 1;
+        }
+        std::cout << "-------- grad_y vmin,vmax= " << vmin << ", "  << vmax << std::endl;
+    }
+    catch (const std::ifstream::failure& e) {
+      std::cout << ">>>>>>> Exception opening/reading grad_x file";
+    }
+
+}
+
+void read_membrane_distance_data( void )
+{
     //---------------------------------
-    // read glom BM distances (signed)
-	int pbm_gbm_index = microenvironment.find_density_index( "pbm_gbm_distance" ); 
-    std::cout << "\n---------- pbm_gbm_index = " << pbm_gbm_index << std::endl;
+    // read glom BM distances (signed?)
+	int gbm_index = microenvironment.find_density_index( "pbm_gbm_distance" ); 
+    std::cout << "\n---------- gbm_index = " << gbm_index << std::endl;
 
     // for( int n=0; n < microenvironment.number_of_voxels(); n++ )
-    std::ifstream pbm_gbm_fp;
+    std::ifstream gbm_file;
     std::string line;
     try {
-        // gbm_file.open("../data/pbm_gbm_dist.dat");
-        // gbm_file.open(parameters.strings("pbm_gbm_distance_file"));
-        pbm_gbm_fp.open(pbm_gbm_dist_file);
+        gbm_file.open("./config/pbm_gbm_dist.dat");
 
         double dval;
         int n = 0;
@@ -164,7 +235,7 @@ void setup_microenvironment( void )
         float vmax = -1.e6;
         float v;
 
-        while (std::getline(pbm_gbm_fp,line))
+        while (std::getline(gbm_file,line))
         {
             // std::cout << "-- " << count1 << std::endl;
             // count1++;
@@ -177,7 +248,7 @@ void setup_microenvironment( void )
                 v = std::stof(field);
                 if (v < vmin) vmin = v;
                 if (v > vmax) vmax = v;
-                microenvironment(n)[pbm_gbm_index] = v;
+                microenvironment(n)[gbm_index] = v;
                 n++;
                 // count2++;
                 // if (count2 > 5) break;
@@ -191,13 +262,12 @@ void setup_microenvironment( void )
 
     //---------------------------------
     // read glom capillary (4 blood vessel regions) distances (signed)
-	int vessel_index = microenvironment.find_density_index( "blood_vessel_distance" ); 
-    std::cout << "\n---------- vessel_index = " << vessel_index << std::endl;
+	int gcap_index = microenvironment.find_density_index( "blood_vessel_distance" ); 
+    std::cout << "\n---------- gcap_index = " << gcap_index << std::endl;
 
-    std::ifstream vessel_dist_fp;
+    std::ifstream gcap_file;
     try {
-        // gcap_file.open("../data/vessels4_dist.dat");
-        vessel_dist_fp.open(vessels_dist_file);
+        gcap_file.open("./config/vessels4_dist.dat");
 
         double dval;
         int n = 0;
@@ -205,7 +275,7 @@ void setup_microenvironment( void )
         float vmax = -1.e6;
         float v;
 
-        while (std::getline(vessel_dist_fp,line))
+        while (std::getline(gcap_file,line))
         {
             // std::cout << "-- " << count1 << std::endl;
             // count1++;
@@ -218,7 +288,7 @@ void setup_microenvironment( void )
                 v = std::stof(field);
                 if (v < vmin) vmin = v;
                 if (v > vmax) vmax = v;
-                microenvironment(n)[vessel_index] = v;
+                microenvironment(n)[gcap_index] = v;
                 n++;
                 // count2++;
                 // if (count2 > 5) break;
@@ -229,6 +299,110 @@ void setup_microenvironment( void )
     catch (const std::ifstream::failure& e) {
       std::cout << "Exception opening/reading file";
     }
+
+}
+
+void setup_microenvironment( void )
+{
+    // static std::string pbm_gbm_dist_file = parameters.strings( "pbm_gbm_distance_file" ); 
+    // static std::string vessels_dist_file = parameters.strings( "vessels_distance_file" ); 
+
+    // std::cout << "\n---------- setup_microenvironment(): dist1 file " << pbm_gbm_dist_file << std::endl;
+    // std::cout << "\n---------- setup_microenvironment(): dist2 file" << vessels_dist_file << std::endl;
+
+    // set domain parameters 
+
+    // put any custom code to set non-homogeneous initial conditions or 
+    // extra Dirichlet nodes here. 
+
+    // initialize BioFVM 
+
+    initialize_microenvironment();
+
+    //---------------------------------
+    // read glom BM distances (signed)
+	// int pbm_gbm_index = microenvironment.find_density_index( "pbm_gbm_distance" ); 
+    // std::cout << "\n---------- pbm_gbm_index = " << pbm_gbm_index << std::endl;
+
+    // // for( int n=0; n < microenvironment.number_of_voxels(); n++ )
+    // std::ifstream pbm_gbm_fp;
+    // std::string line;
+    // try {
+    //     // gbm_file.open("../data/pbm_gbm_dist.dat");
+    //     // gbm_file.open(parameters.strings("pbm_gbm_distance_file"));
+    //     pbm_gbm_fp.open(pbm_gbm_dist_file);
+
+    //     double dval;
+    //     int n = 0;
+    //     float vmin = 1.e6;
+    //     float vmax = -1.e6;
+    //     float v;
+
+    //     while (std::getline(pbm_gbm_fp,line))
+    //     {
+    //         // std::cout << "-- " << count1 << std::endl;
+    //         // count1++;
+    //         std::istringstream s(line);
+    //         std::string field;
+    //         // if (count1 > 5) break;
+    //         while (std::getline(s,field,','))
+    //         {
+    //             // std::cout << count2 << ": " << field << std::endl;
+    //             v = std::stof(field);
+    //             if (v < vmin) vmin = v;
+    //             if (v > vmax) vmax = v;
+    //             microenvironment(n)[pbm_gbm_index] = v;
+    //             n++;
+    //             // count2++;
+    //             // if (count2 > 5) break;
+    //         }
+    //     }
+    //     std::cout << "-------- vmin,vmax= " << vmin << ", "  << vmax << std::endl;
+    // }
+    // catch (const std::ifstream::failure& e) {
+    //   std::cout << "Exception opening/reading file";
+    // }
+
+    // //---------------------------------
+    // // read glom capillary (4 blood vessel regions) distances (signed)
+	// int vessel_index = microenvironment.find_density_index( "blood_vessel_distance" ); 
+    // std::cout << "\n---------- vessel_index = " << vessel_index << std::endl;
+
+    // std::ifstream vessel_dist_fp;
+    // try {
+    //     // gcap_file.open("../data/vessels4_dist.dat");
+    //     vessel_dist_fp.open(vessels_dist_file);
+
+    //     double dval;
+    //     int n = 0;
+    //     float vmin = 1.e6;
+    //     float vmax = -1.e6;
+    //     float v;
+
+    //     while (std::getline(vessel_dist_fp,line))
+    //     {
+    //         // std::cout << "-- " << count1 << std::endl;
+    //         // count1++;
+    //         std::istringstream s(line);
+    //         std::string field;
+    //         // if (count1 > 5) break;
+    //         while (std::getline(s,field,','))
+    //         {
+    //             // std::cout << count2 << ": " << field << std::endl;
+    //             v = std::stof(field);
+    //             if (v < vmin) vmin = v;
+    //             if (v > vmax) vmax = v;
+    //             microenvironment(n)[vessel_index] = v;
+    //             n++;
+    //             // count2++;
+    //             // if (count2 > 5) break;
+    //         }
+    //     }
+    //     std::cout << "-------- vmin,vmax= " << vmin << ", "  << vmax << std::endl;
+    // }
+    // catch (const std::ifstream::failure& e) {
+    //   std::cout << "Exception opening/reading file";
+    // }
 
     return; 
 }

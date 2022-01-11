@@ -1392,7 +1392,7 @@
   <initial_conditions>
     <cell_positions enabled="true" type="csv">
       <folder>./config</folder>
-      <filename>pre_process_cells-near-pbm2upper.csv</filename>
+      <filename>pari_epi_cells.csv</filename>
     </cell_positions>
   </initial_conditions>
   <user_parameters>
