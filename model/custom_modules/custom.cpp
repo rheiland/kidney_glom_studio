@@ -71,8 +71,10 @@
 #include <sstream>
 #include <string>
 
-double pbm_grad_x[88][75];
-double pbm_grad_y[88][75];
+// double pbm_grad_x[88][75];
+// double pbm_grad_y[88][75];
+double pbm_grad_x[75][88];
+double pbm_grad_y[75][88];
 
 
 void create_cell_types( void )
@@ -96,7 +98,8 @@ void create_cell_types( void )
 
 	cell_defaults.functions.update_migration_bias = NULL; 
 	cell_defaults.functions.update_phenotype = NULL; // update_cell_and_death_parameters_O2_based; 
-	cell_defaults.functions.custom_cell_rule = plasto_elastic_mechanics; // NULL; 
+	// cell_defaults.functions.custom_cell_rule = plasto_elastic_mechanics; 
+	cell_defaults.functions.custom_cell_rule = epithelial_special_mechanics; 
 	cell_defaults.functions.contact_function = NULL; 
 	
 	cell_defaults.functions.add_cell_basement_membrane_interactions = NULL; 
@@ -159,7 +162,7 @@ void read_pbm_membrane_gradient_data( void )
             std::string field;
             // if (count1 > 5) break;
             idx = 0;
-            while (std::getline(s,field,','))
+            while (std::getline(s,field,' ')) // beware, not comma separated!
             {
                 // std::cout << count2 << ": " << field << std::endl;
                 v = std::stof(field);
@@ -194,13 +197,13 @@ void read_pbm_membrane_gradient_data( void )
             std::string field;
             // if (count1 > 5) break;
             idx = 0;
-            while (std::getline(s,field,','))
+            while (std::getline(s,field,' '))   // beware, not comma separated!
             {
                 // std::cout << count2 << ": " << field << std::endl;
                 v = std::stof(field);
                 if (v < vmin) vmin = v;
                 if (v > vmax) vmax = v;
-                pbm_grad_x[idy][idx] = v;
+                pbm_grad_y[idy][idx] = v;
                 n++;
                 // count2++;
                 // if (count2 > 5) break;
@@ -211,8 +214,10 @@ void read_pbm_membrane_gradient_data( void )
         std::cout << "-------- grad_y vmin,vmax= " << vmin << ", "  << vmax << std::endl;
     }
     catch (const std::ifstream::failure& e) {
-      std::cout << ">>>>>>> Exception opening/reading grad_x file";
+      std::cout << ">>>>>>> Exception opening/reading grad_y file";
     }
+
+    // std::exit(1);
 
 }
 

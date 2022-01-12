@@ -13,7 +13,7 @@
     <use_2D>true</use_2D>
   </domain>
   <overall>
-    <max_time units="min">80</max_time>
+    <max_time units="min">10</max_time>
     <time_units>min</time_units>
     <space_units>micron</space_units>
     <dt_diffusion units="min">0.01</dt_diffusion>
@@ -21,16 +21,16 @@
     <dt_phenotype units="min">6</dt_phenotype>
   </overall>
   <parallel>
-    <omp_num_threads>4</omp_num_threads>
+    <omp_num_threads>1</omp_num_threads>
   </parallel>
   <save>
     <folder>output</folder>
     <full_data>
-      <interval units="min">20</interval>
+      <interval units="min">1</interval>
       <enable>true</enable>
     </full_data>
     <SVG>
-      <interval units="min">20</interval>
+      <interval units="min">1</interval>
       <enable>true</enable>
     </SVG>
     <legacy_data>
@@ -1392,7 +1392,7 @@
   <initial_conditions>
     <cell_positions enabled="true" type="csv">
       <folder>./config</folder>
-      <filename>pari_epi_cells.csv</filename>
+      <filename>pari_epi_test4.csv</filename>
     </cell_positions>
   </initial_conditions>
   <user_parameters>

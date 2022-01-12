@@ -1,7 +1,47 @@
 #include "./mechanics.h"
 
+
 void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
+    extern double pbm_grad_x[75][88];
+    extern double pbm_grad_y[75][88];
+
+    static double x_min = microenvironment.mesh.bounding_box[0]; 
+	static double x_max = microenvironment.mesh.bounding_box[3]; 
+	static double x_diff = microenvironment.mesh.bounding_box[3] - microenvironment.mesh.bounding_box[0]; 
+
+	static double y_min = microenvironment.mesh.bounding_box[1]; 
+	static double y_max = microenvironment.mesh.bounding_box[4]; 
+	static double y_diff = microenvironment.mesh.bounding_box[4] - microenvironment.mesh.bounding_box[1]; 
+
+    // std::cout << "------ epithelial_special_mechanics" << std::endl;
+
+    double xpos = pCell->position[0];
+    double ypos = pCell->position[1];
+
+    double vmin = 1.e30;
+    double vmax = -vmin;
+    for (int idy=0; idy<75; idy++)
+    for (int idx=0; idx<88; idx++)
+    {
+        if (pbm_grad_x[idy][idx] > vmax)
+        {
+            vmax = pbm_grad_x[idy][idx];
+            // std::cout << "updating vmax="<<vmax<<" at idx,idy=" << idx <<"," <<idy<<std::endl;
+        }
+        if (pbm_grad_x[idy][idx] < vmin)
+        {
+            vmin = pbm_grad_x[idy][idx];
+            // std::cout << "updating vmin="<<vmin<<" at idx,idy=" << idx <<"," <<idy<<std::endl;
+        }
+    }
+    // std::cout << "------ epithelial_special_mechanics: dx min,max = " << vmin << ","<<vmax << std::endl;
+
+
+    std::cout << "------ epithelial_special_mechanics: ID = " << pCell->ID << ": " << xpos << ", " << ypos << "; " << "x_diff = " << x_diff << std::endl;
+
+    // std::cout << "------ idx,idy= " << idx << "," << idy << "; dx,dy = " << pbm_grad_x[idx][idy] <<"," << pbm_grad_y[idx][idy] << std::endl;
+
 	// BM adhesion 
 		// is it time to detach (attachment lifetime)
 		// am I unattached by capable? 
@@ -12,21 +52,20 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 	// plasto-elastic. 
 		// elastic: movement towards rest position 
 	
-	static int nRP = 0; // "rest_position"
-	
-	std::vector<double> displacement = pCell->custom_data.vector_variables[nRP].value ; 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// static int nRP = 0; // "rest_position"
+	// std::vector<double> displacement = pCell->custom_data.vector_variables[nRP].value ; 
+
+    int ix = (int)(((xpos - x_min)/x_diff) * 88);
+    // int iy = 75 - (int)(((ypos - y_min)/y_diff) * 75);
+    int iy = (int)(((ypos - y_min)/y_diff) * 75);
+    std::cout << "------ ID="<<pCell->ID <<": ix,iy= " << ix << "," << iy << "; dx,dy = " << pbm_grad_x[iy][ix] <<"," << pbm_grad_y[iy][ix] << std::endl;
+
+    static double dscale = 0.1;
+    // remember to negate the direction (gradient points toward higher values)
+    pCell->position[0] -= pbm_grad_x[iy][ix] * dscale;   
+    pCell->position[1] -= pbm_grad_y[iy][ix] * dscale;
 	return; 
 }
-
 
 void plasto_elastic_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
@@ -59,8 +98,39 @@ void plasto_elastic_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 	return; 
 }
 
-// specialized potential function 
+void plasto_elastic_mechanics_v0( Cell* pCell, Phenotype& phenotype, double dt )
+{
+    std::cout << "------ plasto_elastic_mechanics\n";
+	// BM adhesion 
+		// is it time to detach (attachment lifetime)
+		// am I unattached by capable? 
+			// search through neighbors, find closest BM type agent 
+			// form adhesion 
+		// elastic adhesion 
+	
+	// plasto-elastic. 
+		// elastic: movement towards rest position 
+	
+	static int nRP = 0; // "rest_position"
+	
+	// displacement 
+	std::vector<double> displacement = pCell->custom_data.vector_variables[nRP].value - pCell->position; 
+	
+	static int nEConst = pCell->custom_data.find_variable_index( "cell_elasticity" );
+	static int nPConst = pCell->custom_data.find_variable_index( "cell_plasticity" );
 
+	// first, update the agent's velocity based upon the elastic model
+	axpy( &( pCell->velocity ) , pCell->custom_data[nEConst] , displacement );
+
+	// now, plastic mechanical relaxation
+
+	double plastic_temp_constant = -dt * pCell->custom_data[nPConst];
+	axpy( &(pCell->custom_data.vector_variables[nRP].value) , plastic_temp_constant , displacement );
+	
+	return; 
+}
+
+// specialized potential function 
 void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 {
 	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" ); 
@@ -193,24 +263,8 @@ void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double
 	return; 
 }
 
-
-
 void BM_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	return; 
 }
 
