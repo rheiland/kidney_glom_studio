@@ -3,6 +3,8 @@
 
 void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
+    static bool first_time = true;
+
     // these need to match that in custom.cpp
     static constexpr int NXG=875;  
     static constexpr int NYG=750;
@@ -41,9 +43,10 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
     // std::cout << "------ epithelial_special_mechanics: dx min,max = " << vmin << ","<<vmax << std::endl;
 
 
-    std::cout << "------ epithelial_special_mechanics: ID = " << pCell->ID << ": " << xpos << ", " << ypos << "; " << "x_diff = " << x_diff << std::endl;
-
-    // std::cout << "------ idx,idy= " << idx << "," << idy << "; dx,dy = " << pbm_grad_x[idx][idy] <<"," << pbm_grad_y[idx][idy] << std::endl;
+    if (first_time) 
+    {
+        std::cout << "------ epithelial_special_mechanics: ID = " << pCell->ID << ": " << xpos << ", " << ypos << "; " << "x_diff = " << x_diff << std::endl;
+    }
 
 	// BM adhesion 
 		// is it time to detach (attachment lifetime)
@@ -61,7 +64,12 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
     int ix = (int)(((xpos - x_min)/x_diff) * NXG);
     // int iy = 75 - (int)(((ypos - y_min)/y_diff) * 75);
     int iy = (int)(((ypos - y_min)/y_diff) * NYG);
-    std::cout << "------ ID="<<pCell->ID <<": ix,iy= " << ix << "," << iy << "; dx,dy = " << pbm_grad_x[iy][ix] <<"," << pbm_grad_y[iy][ix] << std::endl;
+
+    if (first_time) 
+    {
+        std::cout << " ------ ID="<<pCell->ID <<": ix,iy= " << ix << "," << iy << "; dx,dy = " << pbm_grad_x[iy][ix] <<"," << pbm_grad_y[iy][ix] << std::endl;
+        first_time = false;
+    }
 
     // static double dscale = 0.1;
     // remember to negate the direction (gradient points toward higher values)

@@ -239,7 +239,7 @@ class Vis(QWidget):
         print('bds=',bds)
         self.xmin = float(bds[0])
         self.xmax = float(bds[3])
-        self.xmax = 0.0   # rwh: temp fix
+        # self.xmax = 0.0   # rwh: temp fix
         print('reset_model(): self.xmin, xmax=',self.xmin, self.xmax)
         self.x_range = self.xmax - self.xmin
 
@@ -717,8 +717,11 @@ class Vis(QWidget):
 
         # plt.xlim(self.xmin, self.xmax)
         # plt.ylim(self.ymin, self.ymax)
-        # self.ax0.set_xlim(self.xmin, self.xmax)
-        self.ax0.set_xlim(-450, self.xmax)
+
+        # set xrange & yrange of plots
+        self.ax0.set_xlim(self.xmin, self.xmax)
+        # self.ax0.set_xlim(-450, self.xmax)
+
         # self.ax0.set_ylim(self.ymin, self.ymax)
         self.ax0.set_ylim(0.0, self.ymax)
         self.ax0.tick_params(labelsize=4)
@@ -885,8 +888,9 @@ class Vis(QWidget):
         #     cbar = self.figure.colorbar(substrate_plot, ax=self.ax0)
         #     cbar.ax.tick_params(labelsize=self.fontsize)
 
-        # self.ax0.set_xlim(self.xmin, self.xmax)
-        self.ax0.set_xlim(-450, self.xmax)
+        self.ax0.set_xlim(self.xmin, self.xmax)
+        # self.ax0.set_xlim(-450, self.xmax)
+
         # self.ax0.set_ylim(self.ymin, self.ymax)
         self.ax0.set_ylim(0.0, self.ymax)
         # self.ax0.clf()
