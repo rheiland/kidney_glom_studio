@@ -13,7 +13,7 @@
     <use_2D>true</use_2D>
   </domain>
   <overall>
-    <max_time units="min">30</max_time>
+    <max_time units="min">10</max_time>
     <time_units>min</time_units>
     <space_units>micron</space_units>
     <dt_diffusion units="min">0.01</dt_diffusion>
@@ -326,7 +326,7 @@
         </volume>
         <mechanics>
           <cell_cell_adhesion_strength units="micron/min">0.4</cell_cell_adhesion_strength>
-          <cell_cell_repulsion_strength units="micron/min">20.0</cell_cell_repulsion_strength>
+          <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
           <relative_maximum_adhesion_distance units="dimensionless">1.5</relative_maximum_adhesion_distance>
           <options>
             <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
@@ -334,11 +334,11 @@
           </options>
         </mechanics>
         <motility>
-          <speed>2</speed>
+          <speed>1</speed>
           <persistence_time>1</persistence_time>
-          <migration_bias>0.5</migration_bias>
+          <migration_bias>.5</migration_bias>
           <options>
-            <enabled>true</enabled>
+            <enabled>false</enabled>
             <use_2D>true</use_2D>
             <chemotaxis>
               <enabled>false</enabled>
