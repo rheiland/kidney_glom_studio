@@ -71,10 +71,15 @@
 #include <sstream>
 #include <string>
 
-// double pbm_grad_x[88][75];
-// double pbm_grad_y[88][75];
-double pbm_grad_x[75][88];
-double pbm_grad_y[75][88];
+// double pbm_grad_x[75][88];
+// double pbm_grad_y[75][88];
+
+// static constexpr int NXG=88;
+// static constexpr int NYG=75;
+static constexpr int NXG=875;
+static constexpr int NYG=750;
+double pbm_grad_x[NYG][NXG];
+double pbm_grad_y[NYG][NXG];
 
 
 void create_cell_types( void )
@@ -150,9 +155,13 @@ void read_pbm_membrane_gradient_data( void )
     int idy = 0;
     int idx = 0;
 
+    std::string fname1 = "./config/grad_x_pbm_875x750.dat";
+    std::string fname2 = "./config/grad_y_pbm_875x750.dat";
+
     try {
-        std::cout << " ---- Reading ./config/grad_x_pbm.dat\n";
-        grad_file.open("./config/grad_x_pbm.dat");
+        std::cout << " ---- Reading " << fname1 << std::endl;
+        // grad_file.open("./config/grad_x_pbm.dat");
+        grad_file.open(fname1);
 
         while (std::getline(grad_file,line))
         {
@@ -179,14 +188,15 @@ void read_pbm_membrane_gradient_data( void )
         std::cout << "-------- grad_x vmin,vmax= " << vmin << ", "  << vmax << std::endl;
     }
     catch (const std::ifstream::failure& e) {
-      std::cout << ">>>>>>> Exception opening/reading grad_x file";
+      std::cout << ">>>>>>> Exception opening/reading " << fname1 << std::endl;
     }
 
     grad_file.close();
 
     try {
-        grad_file.open("./config/grad_y_pbm.dat");
-        std::cout << " ---- Reading ./config/grad_y_pbm.dat\n";
+        std::cout << " ---- Reading " << fname2 << std::endl;
+        // grad_file.open("./config/grad_x_pbm.dat");
+        grad_file.open(fname2);
         idx = 0;
         idy = 0;
         while (std::getline(grad_file,line))
@@ -214,7 +224,7 @@ void read_pbm_membrane_gradient_data( void )
         std::cout << "-------- grad_y vmin,vmax= " << vmin << ", "  << vmax << std::endl;
     }
     catch (const std::ifstream::failure& e) {
-      std::cout << ">>>>>>> Exception opening/reading grad_y file";
+      std::cout << ">>>>>>> Exception opening/reading " << fname2 << std::endl;
     }
 
     // std::exit(1);

@@ -3,8 +3,11 @@
 
 void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
-    extern double pbm_grad_x[75][88];
-    extern double pbm_grad_y[75][88];
+    // these need to match that in custom.cpp
+    static constexpr int NXG=875;  
+    static constexpr int NYG=750;
+    extern double pbm_grad_x[NYG][NXG];
+    extern double pbm_grad_y[NYG][NXG];
 
     static double x_min = microenvironment.mesh.bounding_box[0]; 
 	static double x_max = microenvironment.mesh.bounding_box[3]; 
@@ -21,8 +24,8 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 
     double vmin = 1.e30;
     double vmax = -vmin;
-    for (int idy=0; idy<75; idy++)
-    for (int idx=0; idx<88; idx++)
+    for (int idy=0; idy<NYG; idy++)
+    for (int idx=0; idx<NXG; idx++)
     {
         if (pbm_grad_x[idy][idx] > vmax)
         {
@@ -55,15 +58,57 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 	// static int nRP = 0; // "rest_position"
 	// std::vector<double> displacement = pCell->custom_data.vector_variables[nRP].value ; 
 
-    int ix = (int)(((xpos - x_min)/x_diff) * 88);
+    int ix = (int)(((xpos - x_min)/x_diff) * NXG);
     // int iy = 75 - (int)(((ypos - y_min)/y_diff) * 75);
-    int iy = (int)(((ypos - y_min)/y_diff) * 75);
+    int iy = (int)(((ypos - y_min)/y_diff) * NYG);
     std::cout << "------ ID="<<pCell->ID <<": ix,iy= " << ix << "," << iy << "; dx,dy = " << pbm_grad_x[iy][ix] <<"," << pbm_grad_y[iy][ix] << std::endl;
 
-    static double dscale = 0.1;
+    // static double dscale = 0.1;
     // remember to negate the direction (gradient points toward higher values)
-    pCell->position[0] -= pbm_grad_x[iy][ix] * dscale;   
-    pCell->position[1] -= pbm_grad_y[iy][ix] * dscale;
+    // double vnorm = 0.1;
+    // pCell->position[0] -= pbm_grad_x[iy][ix] * dscale;   
+    // pCell->position[1] -= pbm_grad_y[iy][ix] * dscale;
+
+    // adopted from update_motility_vector (in core/PhysiCell_cell.cpp)
+
+    // choose a uniformly random unit vector 
+    double temp_angle = 6.28318530717959 * UniformRandom();
+    double temp_phi = 3.1415926535897932384626433832795 * UniformRandom();
+    
+    double sin_phi = sin(temp_phi);
+    double cos_phi = cos(temp_phi);
+    
+    if( phenotype.motility.restrict_to_2D == true )
+    { 
+        sin_phi = 1.0; 
+        cos_phi = 0.0;
+    }
+    
+    std::vector<double> dvec; 
+    dvec.resize(3,0.0); 
+    
+    // invert to point *to* PBM
+    dvec[0] = -pbm_grad_x[iy][ix]; 
+    dvec[1] = -pbm_grad_y[iy][ix]; 
+    dvec[2] = 0.0; //  assuming 2D model
+    
+    // if the update_bias_vector function is set, use it  
+    if( pCell->functions.update_migration_bias )
+    {
+        pCell->functions.update_migration_bias( pCell, phenotype, dt ); 
+    }
+    
+    phenotype.motility.motility_vector = phenotype.motility.migration_bias_direction; // motiltiy = bias_vector
+    phenotype.motility.motility_vector *= phenotype.motility.migration_bias; // motility = bias*bias_vector 
+
+    double one_minus_bias = 1.0 - phenotype.motility.migration_bias; 
+		
+    axpy( &(phenotype.motility.motility_vector), one_minus_bias, dvec ); // motility = (1-bias)*randvec + bias*bias_vector
+		
+    normalize( &(phenotype.motility.motility_vector) ); 
+		
+    phenotype.motility.motility_vector *= phenotype.motility.migration_speed;
+    pCell->update_motility_vector( dt );
 	return; 
 }
 
