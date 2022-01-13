@@ -334,11 +334,11 @@
           </options>
         </mechanics>
         <motility>
-          <speed>1</speed>
+          <speed>2</speed>
           <persistence_time>1</persistence_time>
           <migration_bias>.5</migration_bias>
           <options>
-            <enabled>false</enabled>
+            <enabled>true</enabled>
             <use_2D>true</use_2D>
             <chemotaxis>
               <enabled>false</enabled>
@@ -1392,7 +1392,7 @@
   <initial_conditions>
     <cell_positions enabled="true" type="csv">
       <folder>./config</folder>
-      <filename>pari_epi_test4.csv</filename>
+      <filename>cells.csv</filename>
     </cell_positions>
   </initial_conditions>
   <user_parameters>
