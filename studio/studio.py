@@ -415,9 +415,9 @@ class PhysiCellXMLCreator(QWidget):
     def save_cb(self):
         # self.config_file = copy_file
         self.config_tab.fill_xml()
-        # self.microenv_tab.fill_xml()
-        # self.celldef_tab.fill_xml()
-        # self.user_params_tab.fill_xml()
+        self.microenv_tab.fill_xml()
+        self.celldef_tab.fill_xml()
+        self.user_params_tab.fill_xml()
 
         # filePath = QFileDialog.getOpenFileName(self,'',".",'*.xml')
         # print("gui4xml:  save_cb: writing to: ",self.config_file)

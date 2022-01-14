@@ -5553,8 +5553,14 @@ class CellDef(QWidget):
 					# 	<net_export_rate units="total substrate/min">22.3</net_export_rate> 
 					# </substrate> 
 
+        print("self.substrate_list = ",self.substrate_list)
         for substrate in self.substrate_list:
+            print("substrate = ",substrate)
+            if (substrate == "blood_vessel_distance") or (substrate == "pbm_gbm_distance"):
+                continue
             elm = ET.SubElement(secretion, "substrate",{"name":substrate})
+            if elm == None:
+                print("elm is None")
             elm.text = self.indent14
             elm.tail = self.indent12
 
