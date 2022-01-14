@@ -13,7 +13,7 @@
     <use_2D>true</use_2D>
   </domain>
   <overall>
-    <max_time units="min">30</max_time>
+    <max_time units="min">10</max_time>
     <time_units>min</time_units>
     <space_units>micron</space_units>
     <dt_diffusion units="min">0.01</dt_diffusion>
@@ -26,11 +26,11 @@
   <save>
     <folder>output</folder>
     <full_data>
-      <interval units="min">1</interval>
-      <enable>true</enable>
+      <interval units="min">2</interval>
+      <enable>false</enable>
     </full_data>
     <SVG>
-      <interval units="min">1</interval>
+      <interval units="min">2</interval>
       <enable>true</enable>
     </SVG>
     <legacy_data>
