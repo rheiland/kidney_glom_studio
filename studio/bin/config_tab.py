@@ -367,6 +367,11 @@ class Config(QWidget):
         else:
             self.save_full.setChecked(False)
 
+        if self.xml_root.find(".//initial_conditions//cell_positions").attrib['enabled'].lower() == 'true':
+            self.cells_csv.setChecked(True)
+        else:
+            self.cells_csv.setChecked(False)
+
 
 
     # Read values from the GUI widgets and generate/write a new XML

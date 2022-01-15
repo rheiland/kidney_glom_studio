@@ -101,6 +101,10 @@ class RunModel(QWidget):
 
     def run_model_cb(self):
         print("===========  run_model_cb():  ============")
+
+        auto_load_params = True
+        # if auto_load_params:
+
         if self.vis_tab:
             # self.vis_tab.reset_axes()
             self.vis_tab.reset_model_flag = True
@@ -112,6 +116,7 @@ class RunModel(QWidget):
         #         print("Error: %s : %s" % (f, e.strerror))
         print("  deleting /output")
         os.system('rm -rf output/*')
+
         # if os.path.isdir('tmpdir'):
         #     # something on NFS causing issues...
         #     tname = tempfile.mkdtemp(suffix='.bak', prefix='output_', dir='.')
@@ -133,6 +138,7 @@ class RunModel(QWidget):
             xml_str = self.config_xml_name.text()
             print("running: ",exec_str,xml_str)
             self.p.start(exec_str, [xml_str])
+            # self.p = None  # No, don't do this
         else:
             print("self.p is not None???")
 
@@ -162,4 +168,5 @@ class RunModel(QWidget):
 
     def process_finished(self):
         self.message("Process finished.")
+        print("-- process finished.")
         self.p = None

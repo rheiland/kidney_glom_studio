@@ -464,7 +464,12 @@ void setup_tissue( void )
 	std::cout << std::endl; 
 	
 	// load cells from your CSV file (if enabled)
-	load_subcells_from_pugixml(); 	
+    if (load_subcells_from_pugixml() == false)
+    {
+        std::cout << "NOTE: ------- <cell_positions> in .xml are NOT enabled" << std::endl;
+        return;
+    }
+	
 
 	// more custom setup 
 	// // for each cell, set its relaxed position to current position 

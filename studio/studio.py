@@ -113,10 +113,18 @@ class PhysiCellXMLCreator(QWidget):
         # self.add_new_model(copy_file, True)
         # self.config_file = "config_samples/" + name + ".xml"
         self.config_file = copy_file  # to Save
+        print("-----  __init__():  self.config_file = ",self.config_file)
 
 
         # self.config_file = read_file  # nanoHUB... to Save
-        self.tree = ET.parse(self.config_file)
+        # self.tree = ET.parse(self.config_file)
+        # fp = open(self.config_file)
+        # self.tree = ET.parse(fp)
+        # fp.close()
+
+        with open(self.config_file, 'r') as xml_file:
+            self.tree = ET.parse(xml_file)
+
         # tree = ET.parse(read_file)
         # self.tree = ET.parse(read_file)
         self.xml_root = self.tree.getroot()
@@ -133,7 +141,7 @@ class PhysiCellXMLCreator(QWidget):
         self.microenv_tab = SubstrateDef()
         self.microenv_tab.xml_root = self.xml_root
         substrate_name = self.microenv_tab.first_substrate_name()
-        print("gui4xml: substrate_name=",substrate_name)
+        print("studio.py: substrate_name=",substrate_name)
         self.microenv_tab.populate_tree()  # rwh: both fill_gui and populate_tree??
 
         # self.tab2.tree.setCurrentItem(QTreeWidgetItem,0)  # item
@@ -141,7 +149,7 @@ class PhysiCellXMLCreator(QWidget):
         self.celldef_tab = CellDef()
         self.celldef_tab.xml_root = self.xml_root
         cd_name = self.celldef_tab.first_cell_def_name()
-        print("gui4xml: cd_name=",cd_name)
+        print("studio.py: cd_name=",cd_name)
         self.celldef_tab.populate_tree()
         self.celldef_tab.fill_substrates_comboboxes()
         self.microenv_tab.celldef_tab = self.celldef_tab
@@ -383,7 +391,10 @@ class PhysiCellXMLCreator(QWidget):
         # copy_file = "copy_" + name + ".xml"
         copy_file = "mymodel.xml"
         # shutil.copy(sample_file, copy_file)
-        shutil.copy(full_path_model_name, copy_file)
+        try:
+            shutil.copy(full_path_model_name, copy_file)
+        except:
+            print("files are the same: ",full_path_model_name, copy_file)
         self.add_new_model(copy_file, True)
         # self.config_file = "config_samples/" + name + ".xml"
         self.config_file = copy_file
@@ -420,11 +431,11 @@ class PhysiCellXMLCreator(QWidget):
         self.user_params_tab.fill_xml()
 
         # filePath = QFileDialog.getOpenFileName(self,'',".",'*.xml')
-        # print("gui4xml:  save_cb: writing to: ",self.config_file)
+        # print("studio.py:  save_cb: writing to: ",self.config_file)
 
-        out_file = self.config_file
+        # out_file = self.config_file
         # out_file = "mymodel.xml"
-        print("gui4xml:  save_cb: writing to: ",out_file)
+        print("studio.py:  save_cb: writing to: ",self.config_file)
 
         # self.tree.write(self.config_file)
         # root = ET.fromstring("<fruits><fruit>banana</fruit><fruit>apple</fruit></fruits>""")
@@ -439,7 +450,8 @@ class PhysiCellXMLCreator(QWidget):
         # out_str = self.prettify(root)
         # print(out_str)
 
-        self.tree.write(out_file)
+        # self.tree.write(outfile)
+        self.tree.write(self.config_file)  # does this close the file??
 
         # rwh NOTE: after saving the .xml, do we need to read it back in to reflect changes.
         # self.tree = ET.parse(self.config_file)
@@ -469,7 +481,7 @@ class PhysiCellXMLCreator(QWidget):
         self.user_params_tab.fill_xml()
 
         save_as_file = "mymodel.xml"
-        print("gui4xml:  save_as_cb: writing to: ",save_as_file) # writing to:  ('/Users/heiland/git/PhysiCell-model-builder/rwh.xml', 'All Files (*)')
+        print("studio.py:  save_as_cb: writing to: ",save_as_file) # writing to:  ('/Users/heiland/git/PhysiCell-model-builder/rwh.xml', 'All Files (*)')
         self.tree.write(save_as_file)
 
 
