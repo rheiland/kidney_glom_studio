@@ -45,6 +45,10 @@ class PhysiCellXMLCreator(QWidget):
     def __init__(self, show_vis_flag, parent = None):
         super(PhysiCellXMLCreator, self).__init__(parent)
 
+        self.nanohub_flag = False
+        if( 'HOME' in os.environ.keys() ):
+            self.nanohub_flag = "home/nanohub" in os.environ['HOME']
+
         self.title_prefix = "PhysiCell Studio: "
         # self.title_prefix = "PhysiCell Studio"
         self.setWindowTitle(self.title_prefix)
@@ -107,7 +111,8 @@ class PhysiCellXMLCreator(QWidget):
 
 
         # NOTE! We create a *copy* of the .xml sample model and will save to it.
-        copy_file = "copy_" + model_name + ".xml"
+        # copy_file = "copy_" + model_name + ".xml"
+        copy_file = "mymodel.xml"
         shutil.copy(read_file, copy_file)
         self.setWindowTitle(self.title_prefix + copy_file)
         # self.add_new_model(copy_file, True)
@@ -117,6 +122,8 @@ class PhysiCellXMLCreator(QWidget):
 
 
         # self.config_file = read_file  # nanoHUB... to Save
+        # with open(".", 'rb') as self.config_file:
+        self.tree = ET.parse(self.config_file)
         # self.tree = ET.parse(self.config_file)
         # fp = open(self.config_file)
         # self.tree = ET.parse(fp)
@@ -170,7 +177,9 @@ class PhysiCellXMLCreator(QWidget):
 
 
         # self.save_as_cb()
+        self.tabWidget = QTabWidget()
 
+        # self.run_tab = RunModel(self.nanohub_flag, self.tabWidget)
         self.run_tab = RunModel()
         # self.run_tab.xmin = 
         # self.run_tab.xmax = 
@@ -188,7 +197,7 @@ class PhysiCellXMLCreator(QWidget):
         tabWidget.addTab(self.user_params_tab,"User Params")
         tabWidget.addTab(self.run_tab,"Run")
         if show_vis_flag:
-            self.vis_tab = Vis()
+            self.vis_tab = Vis(self.nanohub_flag)
             # self.vis_tab.xml_root = self.xml_root
             tabWidget.addTab(self.vis_tab,"Plot")
             self.run_tab.vis_tab = self.vis_tab
@@ -434,6 +443,8 @@ class PhysiCellXMLCreator(QWidget):
         # print("studio.py:  save_cb: writing to: ",self.config_file)
 
         # out_file = self.config_file
+        # out_file = "mymodel.xml"
+        # print("gui4xml:  save_cb: writing to: ",out_file)
         # out_file = "mymodel.xml"
         print("studio.py:  save_cb: writing to: ",self.config_file)
 

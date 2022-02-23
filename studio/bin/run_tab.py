@@ -9,6 +9,7 @@ Dr. Paul Macklin (macklinp@iu.edu)
 import sys
 import os
 from pathlib import Path
+import xml.etree.ElementTree as ET  # https://docs.python.org/2/library/xml.etree.elementtree.html
 from PyQt5 import QtCore, QtGui
 # from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,QLineEdit, QHBoxLayout,QVBoxLayout,QRadioButton,QLabel,QCheckBox,QComboBox,QScrollArea, QPushButton,QPlainTextEdit
@@ -69,8 +70,8 @@ class RunModel(QWidget):
 
         hbox.addWidget(QLabel("Config:"))
         self.config_xml_name = QLineEdit()
-        # self.config_xml_name.setText('mymodel.xml')
-        self.config_xml_name.setText('copy_PhysiCell_settings.xml')
+        self.config_xml_name.setText('mymodel.xml')
+        # self.config_xml_name.setText('copy_PhysiCell_settings.xml')
         hbox.addWidget(self.config_xml_name)
 
         # self.vbox.addStretch()
@@ -127,6 +128,12 @@ class RunModel(QWidget):
 
 
         if self.p is None:  # No process running.
+            # self.tree = ET.parse(self.config_file)
+            self.tree = ET.parse("mymodel.xml")
+            # tree = ET.parse(read_file)
+            # self.tree = ET.parse(read_file)
+            self.xml_root = self.tree.getroot()
+
             self.message("Executing process")
             self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
             self.p.readyReadStandardOutput.connect(self.handle_stdout)
