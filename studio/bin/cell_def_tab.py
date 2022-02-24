@@ -5607,21 +5607,26 @@ class CellDef(QWidget):
             # print("values from GUI tab:")
         # for idx in range(self.custom_data_count):
         # for idx in range(len(self.param_d[cdef]['custom_data'])):
+        idx = 0
         for key_name in self.param_d[cdef]['custom_data'].keys():
             # name = self.custom_data_name[idx].text()
             # value = self.custom_data_value[idx].text()
             # self.param_d[cdef]['custom_data'][name] = value
 
             # What happens if a crazed user changes the units or description for different cell_types?
+            # Oh, we don't allow that; all edits are copied to all other cell types.
             # units = self.custom_data_units[idx].text()
             # desc = self.custom_data_description[idx].text()
+            units = self.custom_data_units[idx].text()
+            desc = self.custom_data_description[idx].text()
+            idx += 1
             # if self.debug_print_fill_xml:
                 # print(idx,name,value,units,desc)
 
 
-            elm = ET.SubElement(custom_data, key_name )
-                    # { "units":units,
-                    #   "description":desc } )
+            elm = ET.SubElement(custom_data, key_name, 
+                    { "units":units,
+                      "description":desc } )
 
             elm.text = self.param_d[cdef]['custom_data'][key_name]  # value for this var for this cell def
             elm.tail = self.indent10
