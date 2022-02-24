@@ -8,6 +8,7 @@ Dr. Paul Macklin (macklinp@iu.edu)
 
 import sys
 import os
+import time
 from pathlib import Path
 import xml.etree.ElementTree as ET  # https://docs.python.org/2/library/xml.etree.elementtree.html
 from PyQt5 import QtCore, QtGui
@@ -28,6 +29,16 @@ class RunModel(QWidget):
 
         #-------------------------------------------
         self.vis_tab = None
+
+        # following set in studio.py
+        self.homedir = ''   
+        self.config_file = None
+        self.tree = None
+
+        self.config_tab = None
+        self.microenv_tab = None
+        self.celldef_tab = None
+        self.user_params_tab = None
 
         self.sim_output = QWidget()
         self.main_layout = QVBoxLayout()
@@ -96,6 +107,18 @@ class RunModel(QWidget):
         self.layout.addWidget(self.scroll)
 
 #------------------------------
+    def update_xml_from_gui(self):
+        self.xml_root = self.tree.getroot()
+        self.config_tab.xml_root = self.xml_root
+        self.microenv_tab.xml_root = self.xml_root
+        self.celldef_tab.xml_root = self.xml_root
+        self.user_params_tab.xml_root = self.xml_root
+
+        self.config_tab.fill_xml()
+        self.microenv_tab.fill_xml()
+        self.celldef_tab.fill_xml()
+        self.user_params_tab.fill_xml()
+
         
     def message(self, s):
         self.text.appendPlainText(s)
@@ -117,12 +140,22 @@ class RunModel(QWidget):
         #         print("Error: %s : %s" % (f, e.strerror))
         print("  deleting /output")
         os.system('rm -rf output/*')
+        time.sleep(1)
 
         # if os.path.isdir('tmpdir'):
         #     # something on NFS causing issues...
         #     tname = tempfile.mkdtemp(suffix='.bak', prefix='output_', dir='.')
         #     shutil.move('output', tname)
         # os.makedirs('output')
+
+        self.update_xml_from_gui()
+
+        print("\n\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        # print("run_tab.py: ----> writing modified model to ",new_config_file)
+        # self.tree.write(new_config_file)  # saves modified XML to tmpdir/config.xml 
+        # self.tree.write("model.xml")  # saves modified XML to tmpdir/config.xml 
+
+        self.tree.write(self.config_file)  # saves modified XML to tmpdir/config.xml 
 
         # update axes ranges on Plots
 

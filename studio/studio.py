@@ -49,7 +49,8 @@ class PhysiCellXMLCreator(QWidget):
         if( 'HOME' in os.environ.keys() ):
             self.nanohub_flag = "home/nanohub" in os.environ['HOME']
 
-        self.title_prefix = "PhysiCell Studio: "
+        # self.title_prefix = "PhysiCell Studio: "
+        self.title_prefix = "PhysiCell kidney glom: "
         # self.title_prefix = "PhysiCell Studio"
         self.setWindowTitle(self.title_prefix)
 
@@ -181,6 +182,12 @@ class PhysiCellXMLCreator(QWidget):
 
         # self.run_tab = RunModel(self.nanohub_flag, self.tabWidget)
         self.run_tab = RunModel()
+        self.run_tab.config_tab = self.config_tab
+        self.run_tab.microenv_tab = self.microenv_tab 
+        self.run_tab.celldef_tab = self.celldef_tab
+        self.run_tab.user_params_tab = self.user_params_tab
+        self.run_tab.tree = self.tree
+        self.run_tab.config_file = self.config_file
         # self.run_tab.xmin = 
         # self.run_tab.xmax = 
 
@@ -533,108 +540,6 @@ class PhysiCellXMLCreator(QWidget):
         # pssm_tree = ET.parse(pssm_file)
         # pssm_root = pssm_tree.getroot()
 
-
-    def biorobots_cb(self):
-        print("\n\n\n================ copy/load sample ======================================")
-        name = "biorobots_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        shutil.copy(sample_file, "mymodel.xml")
-        self.add_new_model(copy_file, True)
-        # self.config_file = "config_samples/" + name + ".xml"
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('biorobots')
-        self.save_as_cb()
-
-        # self.tree = ET.parse(self.config_file)
-        # self.xml_root = self.tree.getroot()
-        # self.celldef_tab.xml_root = self.xml_root
-        # self.config_tab.fill_gui(self.xml_root)
-        # self.microenv_tab.fill_gui(self.xml_root)
-        # self.celldef_tab.fill_gui(self.xml_root)
-
-    def cancer_biorobots_cb(self):
-        name = "cancer_biorobots_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-    def hetero_cb(self):
-        name = "heterogeneity"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-    def pred_prey_cb(self):
-        name = "pred_prey_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('pred_prey')
-        self.save_as_cb()
-
-    def virus_mac_cb(self):
-        name = "virus_macrophage_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        # self.run_tab.exec_name.setText('virus_macrophage')
-        self.run_tab.exec_name.setText('')
-
-    def worm_cb(self):
-        name = "worm"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-    def cancer_immune_cb(self):
-        name = "cancer_immune3D_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-    def template_cb(self):
-        name = "template"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        shutil.copy(sample_file, "mymodel.xml")
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('template')
-        self.save_as_cb()
-
-    # def template3D_cb(self):
-    #     name = "template3D_flat"
-    #     self.add_new_model(name, True)
-    #     self.config_file = "config_samples/" + name + ".xml"
-    #     self.show_sample_model()
-
     def subcell_cb(self):
         name = "subcellular_flat"
         sample_file = Path("data", name + ".xml")
@@ -644,34 +549,6 @@ class PhysiCellXMLCreator(QWidget):
         self.config_file = copy_file
         self.show_sample_model()
         self.run_tab.exec_name.setText('')
-
-    def covid19_cb(self):
-        name = "covid19_v5_flat"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-    def test_gui_cb(self):
-        name = "test-gui"
-        sample_file = Path("data", name + ".xml")
-        copy_file = "copy_" + name + ".xml"
-        shutil.copy(sample_file, copy_file)
-        self.add_new_model(copy_file, True)
-        self.config_file = copy_file
-        self.show_sample_model()
-        self.run_tab.exec_name.setText('')
-
-		
-# def main():
-#     app = QApplication(sys.argv)
-#     ex = PhysiCellXMLCreator()
-#     # ex.setGeometry(100,100, 800,600)
-#     ex.show()
-#     sys.exit(app.exec_())
 
 def main():
     inputfile = ''
